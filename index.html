@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Pong WorkMate">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Pong WorkMate</title>
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div>
+        <div class="eyebrow" id="todayLabel"></div>
+        <h1 id="pageTitle">วันนี้</h1>
+      </div>
+      <button class="icon-btn" id="installBtn" hidden aria-label="ติดตั้งแอป">⬇️</button>
+    </header>
+
+    <main>
+      <section id="homePage" class="page active">
+        <div class="summary-grid">
+          <button class="summary-card" data-go="tasks">
+            <span class="summary-icon">✅</span>
+            <strong id="homeTaskCount">0</strong>
+            <span>งานที่ต้องทำ</span>
+          </button>
+          <button class="summary-card warning" data-go="tasks">
+            <span class="summary-icon">⚠️</span>
+            <strong id="homeOverdueCount">0</strong>
+            <span>งานค้าง</span>
+          </button>
+          <button class="summary-card" data-go="expenses">
+            <span class="summary-icon">💰</span>
+            <strong id="homeExpenseMonth">฿0</strong>
+            <span>ใช้จ่ายเดือนนี้</span>
+          </button>
+          <button class="summary-card danger" data-go="expenses">
+            <span class="summary-icon">🧾</span>
+            <strong id="homePendingExpense">฿0</strong>
+            <span>ยังไม่ได้เงินคืน</span>
+          </button>
+        </div>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>🔥 งานสำคัญ</h2>
+            <button class="link-btn" data-go="tasks">ดูทั้งหมด</button>
+          </div>
+          <div id="priorityTasks" class="stack"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>💳 ค่าใช้จ่ายล่าสุด</h2>
+            <button class="link-btn" data-go="expenses">ดูทั้งหมด</button>
+          </div>
+          <div id="recentExpenses" class="stack"></div>
+        </section>
+      </section>
+
+      <section id="tasksPage" class="page">
+        <div class="segmented">
+          <button class="seg active" data-task-filter="open">กำลังทำ</button>
+          <button class="seg" data-task-filter="today">วันนี้</button>
+          <button class="seg" data-task-filter="done">เสร็จแล้ว</button>
+        </div>
+        <div id="taskList" class="stack"></div>
+      </section>
+
+      <section id="expensesPage" class="page">
+        <div class="expense-headline">
+          <span>เดือนนี้</span>
+          <strong id="expenseMonthTotal">฿0</strong>
+          <small id="expensePendingTotal">รอเบิก ฿0</small>
+        </div>
+
+        <div class="segmented">
+          <button class="seg active" data-expense-filter="all">ทั้งหมด</button>
+          <button class="seg" data-expense-filter="pending">รอเบิก</button>
+          <button class="seg" data-expense-filter="credit">บัตรเครดิต</button>
+        </div>
+
+        <div id="expenseList" class="stack"></div>
+      </section>
+    </main>
+
+    <button id="fab" class="fab" aria-label="เพิ่มรายการ">＋</button>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-page="home">
+        <span>🏠</span><small>Home</small>
+      </button>
+      <button class="nav-item" data-page="tasks">
+        <span>✅</span><small>Tasks</small>
+      </button>
+      <div class="nav-gap"></div>
+      <button class="nav-item" data-page="expenses">
+        <span>💰</span><small>Expenses</small>
+      </button>
+      <button class="nav-item" data-page="more">
+        <span>•••</span><small>More</small>
+      </button>
+    </nav>
+  </div>
+
+  <div id="quickSheet" class="sheet-backdrop">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>เพิ่มรายการ</h2>
+      <button class="sheet-choice" data-add="task"><span>✅</span><div><strong>เพิ่มงาน</strong><small>บันทึกสิ่งที่ต้องทำ</small></div><b>›</b></button>
+      <button class="sheet-choice" data-add="expense"><span>💰</span><div><strong>เพิ่มค่าใช้จ่าย</strong><small>บันทึกค่าใช้จ่ายสำหรับงาน</small></div><b>›</b></button>
+      <button class="sheet-cancel" data-close-sheet>ยกเลิก</button>
+    </div>
+  </div>
+
+  <div id="taskModal" class="sheet-backdrop">
+    <form id="taskForm" class="sheet form-sheet">
+      <div class="sheet-handle"></div>
+      <div class="form-head"><h2>เพิ่มงาน</h2><button type="button" class="text-close" data-close-modal>ปิด</button></div>
+      <label>ชื่องาน<input name="title" required placeholder="เช่น Follow up ลูกค้า"></label>
+      <label>รายละเอียด<textarea name="details" placeholder="รายละเอียดเพิ่มเติม"></textarea></label>
+      <div class="two-col">
+        <label>Priority
+          <select name="priority">
+            <option value="urgent">🔴 ด่วนมาก</option>
+            <option value="high">🟠 สำคัญ</option>
+            <option value="normal" selected>🟡 ปกติ</option>
+            <option value="low">⚪ ไม่รีบ</option>
+          </select>
+        </label>
+        <label>ประเภท
+          <select name="category">
+            <option>📞 Follow-up</option>
+            <option>🏥 ลูกค้า</option>
+            <option>📄 เอกสาร</option>
+            <option>💰 ใบเสนอราคา</option>
+            <option>📦 ส่งสินค้า</option>
+            <option>📌 อื่น ๆ</option>
+          </select>
+        </label>
+      </div>
+      <label>กำหนดเสร็จ<input name="due" type="datetime-local"></label>
+      <button class="primary-submit" type="submit">บันทึกงาน</button>
+    </form>
+  </div>
+
+  <div id="expenseModal" class="sheet-backdrop">
+    <form id="expenseForm" class="sheet form-sheet">
+      <div class="sheet-handle"></div>
+      <div class="form-head"><h2>เพิ่มค่าใช้จ่าย</h2><button type="button" class="text-close" data-close-modal>ปิด</button></div>
+      <label class="amount-label">จำนวนเงิน
+        <div class="amount-input"><span>฿</span><input name="amount" inputmode="decimal" type="number" step="0.01" min="0" required placeholder="0"></div>
+      </label>
+      <label>รายการ<input name="item" required placeholder="เช่น ค่าอาหารลูกค้า"></label>
+      <div class="two-col">
+        <label>ประเภท
+          <select name="category">
+            <option>🍽️ ค่าอาหาร</option>
+            <option>⛽ น้ำมัน</option>
+            <option>🚗 ทางด่วน</option>
+            <option>🅿️ ค่าจอดรถ</option>
+            <option>🏨 โรงแรม</option>
+            <option>✈️ เดินทาง</option>
+            <option>🎁 สนับสนุนลูกค้า</option>
+            <option>📌 อื่น ๆ</option>
+          </select>
+        </label>
+        <label>จ่ายด้วย
+          <select name="payment">
+            <option>💵 เงินสด</option>
+            <option>🏦 โอน</option>
+            <option>💳 บัตรเครดิต</option>
+          </select>
+        </label>
+      </div>
+      <label>สถานะเบิก
+        <select name="status">
+          <option value="not_submitted">🔴 ยังไม่เบิก</option>
+          <option value="submitted">🟡 ส่งเบิกแล้ว</option>
+          <option value="reimbursed">🟢 เบิกสำเร็จ</option>
+        </select>
+      </label>
+      <label>วันที่<input name="date" type="date" required></label>
+      <label>หมายเหตุ<textarea name="note" placeholder="รายละเอียดเพิ่มเติม"></textarea></label>
+      <button class="primary-submit" type="submit">บันทึกค่าใช้จ่าย</button>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
