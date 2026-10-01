@@ -65,3 +65,35 @@ main{padding:0 14px 18px;max-width:760px;margin:0 auto}
   .bottom-nav,.fab{display:none}
   .summary-grid{grid-template-columns:repeat(4,1fr)}
 }
+
+
+.header-actions{display:flex;align-items:center;gap:8px}
+.mini-sync{width:38px;height:38px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow);font-size:17px}
+.mini-sync.syncing{animation:pulse 1s infinite alternate}
+.mini-sync.error{background:#fee4e2}
+@keyframes pulse{from{opacity:.45}to{opacity:1}}
+
+.auth-gate{position:fixed;inset:0;z-index:500;background:#f4f6fa;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-gate.hidden{display:none}
+.auth-card{width:min(420px,100%);background:#fff;border-radius:28px;padding:28px 22px;text-align:center;box-shadow:0 20px 60px rgba(15,23,42,.12)}
+.auth-logo{width:76px;height:76px;border-radius:24px;background:#0f172a;color:#fff;display:grid;place-items:center;font-size:26px;font-weight:900;margin:0 auto 16px}
+.auth-card h2{font-size:28px;margin:0 0 8px}
+.auth-card p{color:#667085;margin:0 auto 20px;max-width:320px}
+.auth-card small{display:block;color:#98a2b3;margin-top:12px}
+.google-btn{width:100%;min-height:58px;border:1px solid #d0d5dd;border-radius:16px;background:#fff;color:#0f172a;font-weight:850;display:flex;align-items:center;justify-content:center;gap:10px}
+.google-btn span{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#4285f4}
+
+.account-panel{display:flex;align-items:center;gap:14px}
+.account-avatar{width:54px;height:54px;border-radius:18px;background:#0f172a;color:#fff;display:grid;place-items:center;font-size:21px;font-weight:900}
+.account-copy{display:flex;flex-direction:column;min-width:0}
+.account-copy strong{font-size:18px}
+.account-copy span{color:#667085;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid #eaecf0}
+.setting-row:first-child{padding-top:0}
+.setting-row strong,.setting-row small{display:block}
+.setting-row small{color:#667085;margin-top:3px}
+.status-dot{width:12px;height:12px;border-radius:50%;background:#98a2b3}
+.status-dot.online{background:#22c55e}
+.status-dot.syncing{background:#f59e0b}
+.status-dot.error{background:#ef4444}
+.danger-wide{width:100%;min-height:54px;border:0;border-radius:15px;background:#fee4e2;color:#b42318;font-weight:850;margin-top:18px}
