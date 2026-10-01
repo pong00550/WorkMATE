@@ -13,13 +13,30 @@
   <title>Pong WorkMate</title>
 </head>
 <body>
+
+  <div id="authGate" class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-logo">PW</div>
+      <h2>Pong WorkMate</h2>
+      <p>เข้าสู่ระบบเพื่อซิงก์ Tasks และ Expenses ระหว่างมือถือกับคอม</p>
+      <button id="googleSignInBtn" class="google-btn">
+        <span>G</span>
+        เข้าสู่ระบบด้วย Google
+      </button>
+      <small>ใช้ Google Account เดียวกันบนทุกอุปกรณ์</small>
+    </div>
+  </div>
+
   <div id="app">
     <header class="app-header">
       <div>
         <div class="eyebrow" id="todayLabel"></div>
         <h1 id="pageTitle">วันนี้</h1>
       </div>
-      <button class="icon-btn" id="installBtn" hidden aria-label="ติดตั้งแอป">⬇️</button>
+      <div class="header-actions">
+        <span class="mini-sync" id="headerSync" title="Cloud sync">☁️</span>
+        <button class="icon-btn" id="installBtn" hidden aria-label="ติดตั้งแอป">⬇️</button>
+      </div>
     </header>
 
     <main>
@@ -88,6 +105,34 @@
 
         <div id="expenseList" class="stack"></div>
       </section>
+
+      <section id="morePage" class="page">
+        <section class="panel account-panel">
+          <div class="account-avatar" id="accountAvatar">P</div>
+          <div class="account-copy">
+            <strong id="accountName">Pong WorkMate</strong>
+            <span id="accountEmail">กำลังเชื่อมต่อ...</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="setting-row">
+            <div>
+              <strong>☁️ Cloud Sync</strong>
+              <small id="syncStatus">กำลังตรวจสอบ...</small>
+            </div>
+            <span class="status-dot" id="syncDot"></span>
+          </div>
+          <div class="setting-row">
+            <div>
+              <strong>📱 Local cache</strong>
+              <small>เก็บข้อมูลล่าสุดไว้ในเครื่องเพื่อเปิดเร็ว</small>
+            </div>
+          </div>
+          <button id="signOutBtn" class="danger-wide">ออกจากระบบ</button>
+        </section>
+      </section>
+
     </main>
 
     <button id="fab" class="fab" aria-label="เพิ่มรายการ">＋</button>
@@ -192,6 +237,6 @@
     </form>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

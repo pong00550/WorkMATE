@@ -1,34 +1,129 @@
-# Pong WorkMate 1.0 PWA Prototype
+# Pong WorkMate 1.1 — Cloud Sync
 
-นี่คือ Frontend ใหม่แบบ PWA แยกจาก Google Apps Script HTML Service
+## เป้าหมาย
+ใช้ Google Account เดียวกันบน iPhone และคอม แล้วเห็น Tasks / Expenses ชุดเดียวกันแบบ real-time
 
-## ตอนนี้ทำอะไรได้
-- Home dashboard
-- Tasks
-- Expenses
-- Quick Add
-- Mobile bottom navigation
-- ติดตั้งเป็น PWA เมื่อโฮสต์บน HTTPS
-- ทำงาน offline เบื้องต้น
-- ข้อมูล Prototype เก็บใน localStorage ของเครื่อง
+## เพิ่มจาก 1.0
+- Google Sign-in
+- Cloud Firestore real-time sync
+- More / Account page
+- สถานะ Cloud Sync
+- ย้ายข้อมูล localStorage จาก v1.0 ขึ้น Cloud อัตโนมัติครั้งแรก
+- localStorage ยังทำหน้าที่เป็น cache
 
-## สำคัญ
-เวอร์ชันนี้ยังไม่ได้ Sync กับ Google Sheets v0.6
-ตั้งใจแยก UX ให้ใช้งานบนมือถือได้จริงก่อน แล้วขั้นถัดไปค่อยเชื่อม Cloud backend
+---
 
-## วิธีทดลองบนคอม
-เปิดด้วย local web server เช่น VS Code Live Server
-(เปิด index.html ตรง ๆ จะทำให้ service worker ไม่ทำงาน)
+# ตั้งค่า Firebase
 
-## วิธีทดลองบน iPhone แบบติดตั้งจริง
-ต้องโฮสต์ผ่าน HTTPS เช่น GitHub Pages / Firebase Hosting / Cloudflare Pages
-จากนั้นเปิด URL ใน Safari และใช้ Add to Home Screen
+## 1) สร้าง Firebase Project
+เข้า Firebase Console แล้วสร้าง Project เช่น:
+Pong WorkMate
 
-## ขั้นต่อไป
-1. ทดลอง UX บนมือถือ
-2. เพิ่ม Edit/Delete
-3. เลือก Backend:
-   - Firebase / Supabase (เหมาะกับ PWA จริง)
-   - หรือทำ API bridge จากระบบ Google เดิม
-4. ย้ายข้อมูล Tasks/Expenses จาก Google Sheets เดิม
-5. เชื่อม Receipt upload / Calendar / AI
+Google Analytics จะเปิดหรือไม่เปิดก็ได้สำหรับโปรเจกต์นี้
+
+## 2) Register Web App
+Project Overview > Add app > Web
+
+ตั้งชื่อ:
+Pong WorkMate Web
+
+Firebase จะแสดง firebaseConfig ประมาณ:
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  projectId: "...",
+  ...
+};
+
+เปิดไฟล์:
+firebase-config.js
+
+แล้วแทนค่า placeholder ด้วยค่าของคุณ
+
+## 3) เปิด Google Authentication
+Firebase Console > Authentication > Get started
+Sign-in method > Google > Enable > Save
+
+จากนั้น:
+Authentication > Settings > Authorized domains
+
+เพิ่ม domain GitHub Pages ของคุณ เช่น:
+yourusername.github.io
+
+ใส่เฉพาะ domain ไม่ต้องใส่:
+https://
+หรือ
+/pong-workmate/
+
+## 4) สร้าง Firestore Database
+Firebase Console > Firestore Database > Create database
+
+เลือกรูปแบบ Standard / Production ตามหน้าที่ Firebase แสดง
+เลือก Location ที่ต้องการ
+
+## 5) ใส่ Security Rules
+Firestore Database > Rules
+
+ลบของเดิม แล้ว Copy ทั้งไฟล์:
+firestore.rules
+
+ไปวาง จากนั้น Publish
+
+โครงสร้างข้อมูลจะเป็น:
+users/{uid}/tasks/{taskId}
+users/{uid}/expenses/{expenseId}
+
+แต่ละบัญชี Google จะอ่าน/เขียนได้เฉพาะข้อมูลของตัวเอง
+
+## 6) Update GitHub
+Upload ไฟล์ v1.1 ไปแทน v1.0:
+- index.html
+- styles.css
+- app.js
+- firebase-config.js
+- manifest.json
+- sw.js
+- icons/
+
+ไฟล์ firestore.rules เก็บใน GitHub ได้ แต่การใช้งานจริงต้อง Publish ที่ Firebase Console ตามข้อ 5
+
+## 7) รอ GitHub Pages Deploy
+เปิดเว็บใหม่อีกครั้ง
+
+ถ้าเคย Add to Home Screen:
+- เปิดแอปหนึ่งครั้งให้โหลด v1.1
+- ถ้ายังเห็นเวอร์ชันเก่า ให้ปิดแอปแล้วเปิดใหม่
+- หรือเปิด URL จาก Safari ก่อน 1 รอบ
+
+## 8) Login
+กด:
+เข้าสู่ระบบด้วย Google
+
+ใช้บัญชี Google เดียวกันบน:
+- iPhone
+- Computer
+
+จากนั้น Tasks / Expenses จะ Sync กันแบบ real-time
+
+---
+
+# การย้ายข้อมูลจาก v1.0
+ครั้งแรกที่ Login:
+- App จะอ่านข้อความ Tasks / Expenses ที่อยู่ใน localStorage
+- Upload ขึ้น Firestore
+- จากนั้นจะใช้ Cloud เป็นข้อมูลหลัก
+
+แนะนำให้เปิด v1.1 ครั้งแรกบนอุปกรณ์ที่มีข้อมูล v1.0 ที่คุณต้องการเก็บ
+
+---
+
+# สำคัญด้านความปลอดภัย
+firebaseConfig เป็น config ฝั่งเว็บและไม่ใช่รหัสผ่านลับ
+สิ่งที่ป้องกันข้อมูลคือ:
+1. Firebase Authentication
+2. Firestore Security Rules
+
+ห้ามใช้ rule แบบ:
+allow read, write: if true;
+
+สำหรับข้อมูลจริง
